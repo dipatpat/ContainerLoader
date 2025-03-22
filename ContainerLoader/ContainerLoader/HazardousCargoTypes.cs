@@ -1,6 +1,6 @@
 namespace ContainerLoader;
 
-public enum HazardousCargo
+public enum HazardousCargoTypes
 {
     Explosive,
     Flammable,
