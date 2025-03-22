@@ -1,6 +1,6 @@
 namespace ContainerLoader;
 
-public class ProductTemperatures
+public static class ProductTemperatures
 {
         public static readonly Dictionary<RefrigeratedProduct, double> TemperatureByProduct =
             new()
