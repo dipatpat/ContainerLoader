@@ -11,8 +11,6 @@ public abstract class Container
     // The weight of the container itself (for single cargo use)
     public double TareWeight { get; protected set; }
     
-    // The weight of the cargo itself (for single cargo use)
-
     // Total weight (cargo + container)
     public double CargoWeight => CargoMass + TareWeight;
 
@@ -42,6 +40,7 @@ public abstract class Container
     public virtual void EmptyCargo()
     {
         Contents.Clear();
+        Console.WriteLine($"🧹 Emptied container: {SerialNumber}");
     }
 
     public virtual void LoadContainer(Cargo cargo)
@@ -54,6 +53,7 @@ public abstract class Container
         else
         {
             Contents.Add(cargo);
+            Console.WriteLine($"Loaded cargo: {cargo.Name} ({cargo.Weight} kg) into {SerialNumber}");
         }
     }
     

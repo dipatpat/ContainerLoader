@@ -1,45 +1,36 @@
-using System.Runtime.CompilerServices;
-
 namespace ContainerLoader;
 
 public class LiquidContainer(double height, double depth, double tareWeight, double maxPayload)
     : Container(height, depth, tareWeight, maxPayload, "L"), IHazardNotifier
 {
-    private bool HasHazardousCargo()
+    // Determines whether the container would be hazardous if the new cargo is added
+    private bool WouldBeHazardousWith(Cargo newItem)
     {
-        foreach (var item in Contents)
-        {
-            if (item.IsHazardous)
-                return true;
-        }
-
-        return false;
-    }
-
-    public double CheckCapacity()
-    {
-        bool isHazardous = HasHazardousCargo();
-        double safePayload = isHazardous ? MaxPayload * 0.5 : MaxPayload * 0.9;
-        return safePayload;
+        return newItem.IsHazardous || Contents.Any(c => c.IsHazardous);
     }
 
     public override void LoadContainer(Cargo item)
     {
-        double usableCapacity = CheckCapacity();
+        bool willBeHazardous = WouldBeHazardousWith(item);
+        double safePayload = willBeHazardous ? MaxPayload * 0.5 : MaxPayload * 0.9;
+
         double newCargoMass = CargoMass + item.Weight;
 
-        if (newCargoMass > usableCapacity)
+        if (newCargoMass > safePayload)
         {
-            SendNotification(SerialNumber);
-            Console.WriteLine("Attempt to perform a dangerous operation!");
             throw new OverfillException(newCargoMass + TareWeight, MaxPayload);
         }
+
         Contents.Add(item);
+        if (item.IsHazardous || Contents.Any(c => c.IsHazardous))
+        {
+            SendNotification(SerialNumber);
+        }
+        Console.WriteLine($"Loaded liquid cargo: {item.Name} ({item.Weight} kg) into {SerialNumber}");
     }
 
     public void SendNotification(string serialNumber)
     {
-        Console.WriteLine($"HAZARD WARNING: Liquid container{serialNumber} exceeded safe limits!");
+        Console.WriteLine($"HAZARD WARNING: Liquid container {serialNumber} contains hazardous liquid!");
     }
-
 }

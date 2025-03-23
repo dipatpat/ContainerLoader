@@ -19,11 +19,14 @@ public class GasContainer(
 
         if (newTotalWeight > MaxPayload)
         {
-            SendNotification(SerialNumber);
             throw new OverfillException(newTotalWeight, MaxPayload);
         }
 
         Contents.Add(cargo);
+        if (cargo.IsHazardous || Contents.Any(c => c.IsHazardous))
+        {
+            SendNotification(SerialNumber);
+        }
     }
 
     public override void EmptyCargo()
@@ -39,7 +42,7 @@ public class GasContainer(
 
     public void SendNotification(string serialNumber)
     {
-        Console.WriteLine($"HAZARD ALERT: Gas container {serialNumber} has exceeded safe limits!");
+        Console.WriteLine($"HAZARD ALERT: Gas container {serialNumber} contains hazardous gas!");
     }
 }
     
